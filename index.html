@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0 dan Treyding | Pro Simulator</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container" id="app-container" style="display: none;">
+        <!-- Yuqori qism -->
+        <header class="navbar">
+            <div class="logo">
+                <span class="logo-icon">▲</span> TREYDING<span>SIM</span>
+            </div>
+            <div class="portfolio-summary">
+                <div class="balance-item" style="margin-right: 15px; border-right: 1px solid var(--border-color); padding-right: 15px;">
+                    <span class="label">Foydalanuvchi</span>
+                    <span class="value positive" id="display-username">@user</span>
+                </div>
+                <div class="balance-item">
+                    <span class="label">Mavjud Balans (USD)</span>
+                    <span class="value" id="user-balance">$100,000.00</span>
+                </div>
+                <div class="balance-item">
+                    <span class="label">Joriy PnL</span>
+                    <span class="value neutral" id="total-pnl">$0.00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Asosiy qism -->
+        <main class="main-content">
+            
+            <!-- Chap tomondagi grafik va pozitsiyalar -->
+            <section class="trading-view">
+                
+                <!-- Aktiv ma'lumotlari -->
+                <div class="asset-header">
+                    <div class="asset-title">
+                        <h2>BTC/USD</h2>
+                        <span class="asset-type">Bitcoin</span>
+                    </div>
+                    <div class="asset-price-info">
+                        <div class="current-price" id="current-price">45,000.00</div>
+                        <div class="h24-change positive" id="price-change">+0.00%</div>
+                    </div>
+                    
+                    <div class="technical-indicator" id="tech-indicator">
+                        <div class="tech-label">Bozor Holati:</div>
+                        <div class="tech-status neutral" id="tech-status">NEUTRAL</div>
+                    </div>
+                </div>
+
+                <!-- Grafik konteyneri -->
+                <div class="chart-container" id="chart-container-div">
+                    <!-- Chizmachilik asboblari (Toolbar) -->
+                    <div class="drawing-toolbar">
+                        <button class="tool-btn active" id="tool-cursor" title="Kursor">👆</button>
+                        <button class="tool-btn" id="tool-draw" title="Trend Chizig'i (Line)">✏️</button>
+                        <button class="tool-btn" id="tool-clear" title="Tozalash">🗑️</button>
+                    </div>
+                    
+                    <div class="chart-overlay-loader" id="chart-loader">Yozilmoqda...</div>
+                    <canvas id="trading-chart"></canvas>
+                </div>
+
+                <!-- Ochiq pozitsiyalar ro'yxati -->
+                <div class="positions-panel">
+                    <div class="panel-header">
+                        <h3>Ochiq Pozitsiyalar</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Aktiv</th>
+                                    <th>Turi</th>
+                                    <th>Miqdor (BTC)</th>
+                                    <th>Kirish Narxi ($)</th>
+                                    <th>Joriy Narx ($)</th>
+                                    <th>PnL (Foyda/Zarar)</th>
+                                    <th>Harakat</th>
+                                </tr>
+                            </thead>
+                            <tbody id="positions-body">
+                                <tr class="empty-row"><td colspan="7">Hozircha hech qanday pozitsiya yo'q. Darslarni o'qib savdoni boshlang!</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- O'ng tomondagi boshqaruv paneli -->
+            <aside class="side-panel">
+                
+                <!-- Savdo darchasi (Order entry) -->
+                <div class="order-entry-panel card">
+                    <div class="panel-header">
+                        <h3>Savdo qilish</h3>
+                    </div>
+                    <div class="order-tabs">
+                        <button class="tab-btn active">Market</button>
+                        <button class="tab-btn disabled" title="Hozircha faqat Market order ishlaydi">Limit</button>
+                    </div>
+                    
+                    <div class="form-group mt-15">
+                        <label>Miqdor (BTC)</label>
+                        <div class="input-with-suffix">
+                            <input type="number" id="order-amount" value="1.00" step="0.01" min="0.01">
+                            <span class="suffix">BTC</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-15">
+                        <label>Taxminiy Qiymat</label>
+                        <div class="input-with-suffix">
+                            <input type="text" id="order-total" readonly value="45000.00">
+                            <span class="suffix">USD</span>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons mt-20">
+                        <button class="btn btn-buy" id="btn-buy">
+                            <span class="btn-title">Sotib olish (Long)</span>
+                        </button>
+                        <button class="btn btn-sell" id="btn-sell">
+                            <span class="btn-title">Sotish (Short)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- O'quv qo'llanma (Tutorial) moduli -->
+                <div class="tutorial-panel card mt-20">
+                    <div class="panel-header flex-between">
+                        <h3>Treyding Akademiyasi</h3>
+                        <span class="step-indicator" id="tut-step-indicator">1 / 5</span>
+                    </div>
+                    <div class="tutorial-content" id="tut-content">
+                        <!-- JS orqali to'ldiriladi -->
+                    </div>
+                    <div class="tutorial-navigation flex-between mt-15">
+                        <button class="btn btn-outline" id="btn-tut-prev" disabled>Ortga</button>
+                        <button class="btn btn-primary" id="btn-tut-next">Keyingisi</button>
+                    </div>
+                </div>
+
+            </aside>
+
+        </main>
+    </div>
+
+    <!-- Guided Tour Overlay (Interactive Tutorial) -->
+    <div class="tour-overlay" id="tour-overlay">
+        <div class="tour-highlight" id="tour-highlight"></div>
+        <div class="tour-popup" id="tour-popup">
+            <h3 id="tour-title">Tanishuv</h3>
+            <p id="tour-text">Matn</p>
+            <div class="tour-buttons mt-15">
+                <button class="btn btn-outline" id="tour-skip">O'tkazib yuborish</button>
+                <button class="btn btn-primary" id="tour-next">Tushundim</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Modal overlay -->
+    <div class="auth-modal" id="auth-modal">
+        <div class="auth-card">
+            <h2>Hush Kelibsiz!</h2>
+            <p>100,000$ virtual balans bilan treyding olamiga qadam qo'ying.</p>
+            <div class="form-group mt-20">
+                <label>Email manzil</label>
+                <div class="input-with-suffix">
+                    <input type="email" id="auth-email" placeholder="example@gmail.com">
+                </div>
+            </div>
+            <div class="form-group mt-15">
+                <label>Foydalanuvchi nomi (Username)</label>
+                <div class="input-with-suffix">
+                    <input type="text" id="auth-username" placeholder="@elonmusk">
+                </div>
+            </div>
+            <button class="btn btn-primary mt-20" id="btn-register" style="width: 100%;">Ro'yxatdan O'tish va Boshlash</button>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
